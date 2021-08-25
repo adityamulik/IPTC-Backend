@@ -1,9 +1,14 @@
+from django.conf import settings
+
 import pandas as pd
 import math
 from iptcinfo3 import IPTCInfo
 import logging
+import os
 import sys
-from django.conf import settings
+import subprocess
+import glob
+
 
 
 # Logger Details
@@ -95,6 +100,13 @@ def modify_input_for_multiple_files(property_id, image):
     dict['id'] = property_id
     dict['images'] = image
     return dict
+
+def discard_files():
+    for fl in glob.glob(settings.MEDIA_ROOT + "/excel/*"):
+        os.remove(fl)
+    for fl in glob.glob(settings.MEDIA_ROOT + "/images/*"):
+        os.remove(fl)
+    return None
 
 if __name__ == "__main__":
     IPTCKeyword()
