@@ -42,27 +42,20 @@ class IPTCKeyword():
         
         # Loop over rows
         for index, row in retouch_file.iterrows():
-            print(f"Image no {row['image_name']}.")
             # Check if image exists
             try:
+                print(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg")
                 info = IPTCInfo(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg", force=True)
-                # info['headline'] = row['Headline']
-                info['caption/abstract'] = row['Description/Caption']
+                info['headline'] = row['headline']
                 info['keywords'] = [row['keywords']]
-                # info['keywords'] = [row['keywords']]
-                # print(row["keywords"])
-                # info['custom1'] = row['Length']
-                # info['custom2'] = row['Creator/Photgrapher']
-                # info['release date'] = row['Date Created']
-                # info['sub-location'] = row['sub-location']
-                # info['city'] = row['City']
-                # info['province/state'] = row['State/Province']
-                # info['country/primary location name'] = row['Country']
-                # info['category'] = row['Category OR IPTC Scene']
-                if math.isnan(row['Special Instructions']):
-                    pass
-                else:
-                    info['special instructions'] = row['Special Instructions']
+                info['creator'] = row['creator']
+                info['date created'] = row['date_created']
+                info['sub-location'] = row['sub-location']
+                info['city'] = row['city']
+                info['province/state'] = row['province/state']
+                info['country/primary location name'] = row['country']
+                info['category'] = row['category']
+                info['description'] = row['description']
                 try:
                     info.save()
                     print("Worked!")
@@ -81,19 +74,16 @@ class IPTCKeyword():
         
         # Loop over rows
         for index, row in retouch_file.iterrows():
-            print(f"Image no {row['image_name']}.")
             info = IPTCInfo(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg")
-            # print(f"Image: {row['image_name']}.jpg")
+            print(f"Image: {row['image_name']}.jpg")
             print("Headline: ", info['headline'])
             print("Keywords: ", info['keywords'])
-            # print("Caption: ", info['caption/abstract'])
-            # print("City: ", info['city'])
-            print(f"Sub-location: {info['sub-location']} \n")
+            print("Creator: ", info['creator'])
+            print("City: ", info['city'])
+            print(f"Sub-location: {info['sub-location']}")
+            print(f"Description: {info['description']} \n")
         return "IPTC Metadata returned."
 
-# iptc = IPTCKeyword(sys.argv[1])
-# iptc.save_metadata()
-# iptc.get_metadata()
 
 def modify_input_for_multiple_files(property_id, image):
     dict = {}
@@ -106,6 +96,7 @@ def discard_files():
         os.remove(fl)
     for fl in glob.glob(settings.MEDIA_ROOT + "/images/*"):
         os.remove(fl)
+    os.remove(settings.BASE_DIR + "/images.zip")
     return None
 
 if __name__ == "__main__":

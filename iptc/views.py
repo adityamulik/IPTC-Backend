@@ -1,3 +1,8 @@
+import zipfile
+import os
+from io import StringIO
+import shutil
+
 from django.shortcuts import render
 from django.http import HttpResponse, FileResponse
 from django.conf import settings
@@ -48,18 +53,37 @@ class SetMetadataFileUpload(APIView):
         excel = settings.MEDIA_ROOT + "/excel/iptc_metadata.csv"
 
         set_metadata = IPTCKeyword(excel)
-        set_metadata.save_metadata()        
+        saved = set_metadata.save_metadata()     
+        # print(saved)   
 
-        # zip_file_path = settings.MEDIA_ROOT + "/images.zip"
+        # Zip images and return in response.
+        images = settings.MEDIA_ROOT + "/images/"
+        shutil.make_archive("images", "zip", images)
+        images_zip = open(settings.BASE_DIR + "/images.zip", "rb")
 
-        # zip_file = open(zip_file_path, 'rb')
+        response = HttpResponse(images_zip, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=images.zip'
 
-        # response = FileResponse(zip_file, content_type="application/zip")
-        # response['Content-Disposition'] = 'attachment; filename=images.zip'
-
-        # Discard files downloaded
         discard_files()
 
-        # return response
+        return response
 
-        return Response({"status": "OK"})
+
+class GetMetadataFileUpload(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
+
+
+class ValidateExcel(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
