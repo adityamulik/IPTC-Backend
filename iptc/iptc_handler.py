@@ -84,6 +84,26 @@ class IPTCKeyword():
             print(f"Description: {info['description']} \n")
         return "IPTC Metadata returned."
 
+    def validate_excel(self):
+        """
+        Validates all images name in excel.
+        """
+        # Load file
+        retouch_file = pd.read_csv(self.file)
+
+        # Error Images
+        error_images = []
+
+        # Loop over rows
+        for index, row in retouch_file.iterrows():
+            # print(row['image_name'])            
+            if not os.path.isfile(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg"):
+                error_images.append(row["image_name"])
+        if len(error_images) > 0:
+            response = {"error": error_images}
+        else:
+            response = {"success": 0}
+        return response
 
 def modify_input_for_multiple_files(property_id, image):
     dict = {}
@@ -96,7 +116,7 @@ def discard_files():
         os.remove(fl)
     for fl in glob.glob(settings.MEDIA_ROOT + "/images/*"):
         os.remove(fl)
-    os.remove(settings.BASE_DIR + "/images.zip")
+    # os.remove(settings.BASE_DIR + "/images.zip")
     return None
 
 if __name__ == "__main__":
