@@ -73,10 +73,36 @@ class GetMetadataFileUpload(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
-        pass
+        files_upload = FilesUpload.objects.all()
+        serializer = FilesUploadSerializer(files_upload, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
-        pass
+        # Serialize Images and save to media
+        images = dict((request.data).lists())['images']
+
+        for i, img_name in enumerate(images):
+            modified_data = modify_input_for_multiple_files(i,
+                                                            img_name)   
+            file_serializer = FilesUploadSerializer(data=modified_data)
+            if file_serializer.is_valid():
+                file_serializer.save()
+
+        excel_main = {"id": 5, "excel": request.data['excel']}    
+
+        excel_serializer = FilesUploadSerializer(data=excel_main)
+        if excel_serializer.is_valid():
+            excel_serializer.save()
+
+        # IPTC Function goes here
+        excel = settings.MEDIA_ROOT + "/excel/iptc_metadata.csv"
+
+        get_metadata = IPTCKeyword(excel)
+        saved = get_metadata.get_metadata()
+
+        discard_files()
+
+        return Response({"Success": 200})
 
 
 class ValidateExcel(APIView):

@@ -44,10 +44,10 @@ class IPTCKeyword():
         for index, row in retouch_file.iterrows():
             # Check if image exists
             try:
-                print(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg")
+                # print(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg")
                 info = IPTCInfo(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg", force=True)
                 info['headline'] = row['headline']
-                info['keywords'] = [row['keywords']]
+                info['keywords'] = row['keywords']
                 info['creator'] = row['creator']
                 info['date created'] = row['date_created']
                 info['sub-location'] = row['sub-location']
@@ -74,14 +74,32 @@ class IPTCKeyword():
         
         # Loop over rows
         for index, row in retouch_file.iterrows():
-            info = IPTCInfo(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg")
-            print(f"Image: {row['image_name']}.jpg")
-            print("Headline: ", info['headline'])
-            print("Keywords: ", info['keywords'])
-            print("Creator: ", info['creator'])
-            print("City: ", info['city'])
-            print(f"Sub-location: {info['sub-location']}")
-            print(f"Description: {info['description']} \n")
+            try:
+                info = IPTCInfo(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg")
+                row['headline'] = info['headline']
+                print("Headline", info['headline'])
+                row['keywords'] = info['keywords']
+                x = "".join(info['keywords'])
+                print("Keywords", x)
+                row['creator'] = info['creator']
+                print("Creator", info['creator'])
+                row['date created'] = info['date_created']
+                print("Date Created", info['date_created'])
+                row['sub-location'] = info['sub-location']
+                print("Sub-location", info['sub-location'])
+                row['city'] = info['city']
+                print("City", info['city'])
+                row['province/state'] = info['province/state']
+                print("Province/ State", info['province/state'])
+                row['country'] = info['country/primary location name']
+                print("Country", info['country/primary location name'])
+                row['category'] = info['category']
+                print("Category", info['category'])
+                row['description'] = info['description']
+                print("Description", info['description'])
+            except:
+                pass
+        # retouch_file.to_csv("output.csv")
         return "IPTC Metadata returned."
 
     def validate_excel(self):
@@ -116,7 +134,6 @@ def discard_files():
         os.remove(fl)
     for fl in glob.glob(settings.MEDIA_ROOT + "/images/*"):
         os.remove(fl)
-    # os.remove(settings.BASE_DIR + "/images.zip")
     return None
 
 if __name__ == "__main__":
