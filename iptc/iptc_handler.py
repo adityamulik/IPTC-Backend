@@ -48,14 +48,14 @@ class IPTCKeyword():
                 info = IPTCInfo(f"{settings.MEDIA_ROOT}/images/{row['image_name']}.jpg", force=True)
                 info['headline'] = row['headline']
                 info['keywords'] = row['keywords']
-                info['creator'] = row['creator']
+                # info['creator'] = row['creator']
                 info['date created'] = row['date_created']
                 info['sub-location'] = row['sub-location']
                 info['city'] = row['city']
                 info['province/state'] = row['province/state']
                 info['country/primary location name'] = row['country']
                 info['category'] = row['category']
-                info['description'] = row['description']
+                # info['description'] = row['description']
                 try:
                     info.save()
                     print("Worked!")
